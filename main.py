@@ -39,7 +39,12 @@ def upload_file():
             negativeMark = 0
         isRoll = request.form.get("isRoll") == "true"
         digits = int(request.form.get("rollDigit"))
-        files = request.files.getlist("file")
+        file1 = request.files.get('file1')
+        file2 = request.files.get('file2')
+        if totalQuestions > 35:
+            files = [file1, file2]
+        else:
+            files = [file1]
 
         current_dir = os.path.dirname(__file__)
         (
@@ -87,7 +92,8 @@ def upload_file():
             )
             if f == -1:
                 imgToPDF([outputpath2], pdf_output)
-                response = make_response(send_file(pdf_output, as_attachment=True))
+                response = make_response(
+                    send_file(pdf_output, as_attachment=True))
                 response.headers["error"] = marks2
             else:
                 marks1 = evaluate1(
@@ -109,7 +115,8 @@ def upload_file():
                     setno,
                 )
                 imgToPDF([outputpath1, outputpath2], pdf_output)
-                response = make_response(send_file(pdf_output, as_attachment=True))
+                response = make_response(
+                    send_file(pdf_output, as_attachment=True))
                 response.headers["marks"] = marks1 + marks2
                 response.headers["idno"] = idno
                 response.headers["setno"] = setno
@@ -163,7 +170,3 @@ def upload_file():
 @app.route("/")
 def index():
     return "Hello!"
-
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=80)
